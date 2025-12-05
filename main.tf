@@ -130,6 +130,13 @@ provider "aws" {
   region = "ap-southeast-2"
 }
 
+# [FIXED] Hong Kong is an Opt-in region. Needs explicit STS endpoint.
+provider "aws" {
+  alias      = "ap_east_1" 
+  region     = "ap-east-1"
+  sts_region = "ap-east-1"
+}
+
 provider "aws" {
   alias  = "ap_south_1"
   region = "ap-south-1"
@@ -283,33 +290,6 @@ module "ap_southeast_2" {
   role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
-module "ap_southeast_4" {
-  source      = "./modules/speed_tester"
-  providers   = { aws = aws.ap_southeast_4 }
-  region_name = "ap_southeast_4"
-  zip_path    = data.archive_file.lambda_zip.output_path
-  zip_hash    = data.archive_file.lambda_zip.output_base64sha256
-  role_arn    = aws_iam_role.global_lambda_exec.arn
-}
-
-module "ap_southeast_6" {
-  source      = "./modules/speed_tester"
-  providers   = { aws = aws.ap_southeast_6 }
-  region_name = "ap_southeast_6"
-  zip_path    = data.archive_file.lambda_zip.output_path
-  zip_hash    = data.archive_file.lambda_zip.output_base64sha256
-  role_arn    = aws_iam_role.global_lambda_exec.arn
-}
-
-module "ap_southeast_7" {
-  source      = "./modules/speed_tester"
-  providers   = { aws = aws.ap_southeast_7 }
-  region_name = "ap_southeast_7"
-  zip_path    = data.archive_file.lambda_zip.output_path
-  zip_hash    = data.archive_file.lambda_zip.output_base64sha256
-  role_arn    = aws_iam_role.global_lambda_exec.arn
-}
-
 module "ap_east_1" {
   source      = "./modules/speed_tester"
   providers   = { aws = aws.ap_east_1 }
@@ -346,9 +326,6 @@ output "urls" {
     ap_osaka       = module.ap_northeast_3.function_url
     ap_singapore   = module.ap_southeast_1.function_url
     ap_sydney      = module.ap_southeast_2.function_url
-    ap_melbourne   = module.ap_southeast_4.function_url
-    ap_newzealand  = module.ap_southeast_6.function_url
-    ap_thailand    = module.ap_southeast_7.function_url
     ap_hongkong    = module.ap_east_1.function_url
     ap_mumbai      = module.ap_south_1.function_url
   }
