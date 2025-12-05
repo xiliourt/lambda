@@ -1,20 +1,15 @@
-# modules/speed_tester/main.tf
-
 terraform {
   required_providers {
     aws = { source = "hashicorp/aws" }
   }
 }
 
-# 1. DELETE the 'aws_iam_role' resource block entirely
-# 2. DELETE the 'aws_iam_role_policy_attachment' block entirely
-
-# 3. Update the Lambda Function to use the variable
+# 1. Lambda Function
 resource "aws_lambda_function" "speed_test" {
   function_name = "global_speed_test_${var.region_name}"
   
-  # CHANGE THIS LINE:
-  role = var.role_arn  
+  # Use the Global IAM Role ARN passed from root
+  role          = var.role_arn  
   
   handler          = "index.handler"
   runtime          = "nodejs20.x"
@@ -28,25 +23,37 @@ resource "aws_lambda_function" "speed_test" {
   }
 }
 
+# 2. Function URL (Public Endpoint) with CORS Disabled
 resource "aws_lambda_function_url" "url" {
   function_name      = aws_lambda_function.speed_test.function_name
   authorization_type = "NONE"
+
+  # [UPDATED] CORS Protection Disabled
   cors {
-    allow_origins = ["*"]
-    allow_methods = ["GET"]
+    allow_origins = ["*"]  # Allow any website to call this
+    allow_methods = ["*"]  # Allow GET, POST, PUT, DELETE, etc.
+    allow_headers = ["*"]  # Allow any header
+    max_age       = 86400  # Cache the preflight response for 1 day
   }
 }
 
-# --- Variables ---
+# --- Variables & Outputs ---
 
 variable "role_arn" {
-  type        = string
-  description = "The ARN of the global IAM role to use"
+  type = string
 }
 
-variable "region_name" { type = string }
-variable "zip_path" { type = string }
-variable "zip_hash" { type = string }
+variable "region_name" {
+  type = string
+}
+
+variable "zip_path" {
+  type = string
+}
+
+variable "zip_hash" {
+  type = string
+}
 
 output "function_url" {
   value = aws_lambda_function_url.url.function_url
