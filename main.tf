@@ -2,7 +2,6 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      # Pin to the latest actual release
       version = "6.24.0"
     }
   }
@@ -12,6 +11,9 @@ data "archive_file" "lambda_zip" {
   type        = "zip"
   source_file = "${path.module}/lambda_payload/index.mjs"
   output_path = "${path.module}/lambda_payload/function.zip"
+}
+provider "aws" {
+  region = "ap-southeast-2"
 }
 
 # ==============================================================================
