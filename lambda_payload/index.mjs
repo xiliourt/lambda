@@ -1,6 +1,7 @@
 import https from 'https';
 
 export const handler = async (event) => {
+    // --- 1. Configuration ---
     const TIMEOUT_MS = 2500; 
     let targetUrl = null;
 
@@ -17,13 +18,15 @@ export const handler = async (event) => {
     }
 
     try {
+        // --- 2. Perform Download ---
         const result = await downloadWithTimeout(targetUrl, TIMEOUT_MS);
         
+        // --- 3. Calculate Speed ---
         const bits = result.bytes * 8;
         const megaBits = bits / 1000000;
         const mbps = result.duration > 0 ? (megaBits / result.duration).toFixed(2) : "0.00"; 
         const downloadedMB = (result.bytes / 1024 / 1024).toFixed(2);
-        
+
         const responseData = {
             cache_status: result.cacheStatus,
             complete: result.complete,
@@ -38,8 +41,9 @@ export const handler = async (event) => {
             statusCode: 200,
             headers: { 
                 "Content-Type": "application/json",
-                "X-Cache-Status": result.cacheStatus,
-                "Access-Control-Allow-Origin": "*" 
+                "X-Cache-Status": result.cacheStatus
+                // REMOVED: "Access-Control-Allow-Origin": "*" 
+                // Terraform handles this now!
             },
             body: JSON.stringify(responseData)
         };
@@ -55,6 +59,7 @@ export const handler = async (event) => {
 };
 
 function downloadWithTimeout(urlStr, timeoutMs) {
+    // ... (Keep this helper function exactly the same) ...
     return new Promise((resolve, reject) => {
         const options = { method: 'GET', headers: { 'User-Agent': 'AWS-Lambda-Monitor' } };
         const startTime = Date.now();
@@ -63,50 +68,30 @@ function downloadWithTimeout(urlStr, timeoutMs) {
 
         const req = https.request(urlStr, options, (res) => {
             const cacheStatus = res.headers['cf-cache-status'] || 'MISS/UNKNOWN';
-
-            res.on('data', (chunk) => {
-                bytes += chunk.length;
-            });
-
+            res.on('data', (chunk) => { bytes += chunk.length; });
             res.on('end', () => {
                 if (isResolved) return;
                 isResolved = true;
-                
                 const duration = ((Date.now() - startTime) / 1000).toFixed(3);
-                resolve({
-                    complete: true,
-                    cacheStatus,
-                    bytes,
-                    duration
-                });
+                resolve({ complete: true, cacheStatus, bytes, duration });
             });
         });
 
         const timeoutId = setTimeout(() => {
-            if (isResolved) return; 
+            if (isResolved) return;
             isResolved = true;
-
             const currentRes = req.res; 
             const timeoutCacheStatus = currentRes && currentRes.headers ? (currentRes.headers['cf-cache-status'] || 'UNKNOWN') : 'TIMEOUT_BEFORE_HEADERS';
-
-            req.destroy(); 
-            
+            req.destroy();
             const duration = ((Date.now() - startTime) / 1000).toFixed(3);
-            
-            resolve({
-                complete: false,
-                cacheStatus: timeoutCacheStatus,
-                bytes,
-                duration
-            });
+            resolve({ complete: false, cacheStatus: timeoutCacheStatus, bytes, duration });
         }, timeoutMs);
 
         req.on('error', (err) => {
-            if (isResolved) return; 
+            if (isResolved) return;
             clearTimeout(timeoutId);
             reject(err);
         });
-
         req.end();
     });
 }
