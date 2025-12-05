@@ -163,13 +163,6 @@ provider "aws" {
   sts_region = "ap-southeast-7"
 }
 
-# [FIXED] Hong Kong is an Opt-in region. Needs explicit STS endpoint.
-provider "aws" {
-  alias      = "ap_east_1" 
-  region     = "ap-east-1"
-  sts_region = "ap-east-1"
-}
-
 # ==============================================================================
 # DEPLOYMENT MODULES
 # ==============================================================================
