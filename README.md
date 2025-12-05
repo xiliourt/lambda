@@ -6,4 +6,5 @@
 
 I'll release a bulk tester once it's finalised too... But be warned this chews through Lambda free quota quick. 
 
-<img width="1728" height="2634" alt="image" src="https://github.com/user-attachments/assets/1ecf8c86-c89c-4d5c-8fd6-028d934dc3bb" />
+<img width="1728" height="2750" alt="latency-test-results-2025-12-05 (1)" src="https://github.com/user-attachments/assets/94af8bce-1b8c-4c05-9f80-10fbc3bff81a" />
+
