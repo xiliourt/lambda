@@ -12,6 +12,11 @@ data "archive_file" "lambda_zip" {
   source_file = "${path.module}/lambda_payload/index.mjs"
   output_path = "${path.module}/lambda_payload/function.zip"
 }
+
+# ==============================================================================
+# DEFAULT PROVIDER (Used for IAM & Global Resources)
+# ==============================================================================
+# You set this to Sydney, which is fine. The IAM role will be global regardless.
 provider "aws" {
   region = "ap-southeast-2"
 }
@@ -125,24 +130,32 @@ provider "aws" {
   region = "ap-southeast-2"
 }
 
+# [FIXED] Melbourne is an Opt-in region. Needs explicit STS endpoint.
 provider "aws" {
-  alias  = "ap_southeast_4" # Melbourne (Opt-in)
-  region = "ap-southeast-4"
+  alias      = "ap_southeast_4"
+  region     = "ap-southeast-4"
+  sts_region = "ap-southeast-4"
 }
 
+# [FIXED] New Zealand is an Opt-in region. Needs explicit STS endpoint.
 provider "aws" {
-  alias  = "ap_southeast_6" # New Zealand (Opt-in)
-  region = "ap-southeast-6"
+  alias      = "ap_southeast_6" 
+  region     = "ap-southeast-6"
+  sts_region = "ap-southeast-6"
 }
 
+# [FIXED] Thailand is an Opt-in region. Needs explicit STS endpoint.
 provider "aws" {
-  alias  = "ap_southeast_7" # Thailand (Opt-in)
-  region = "ap-southeast-7"
+  alias      = "ap_southeast_7" 
+  region     = "ap-southeast-7"
+  sts_region = "ap-southeast-7"
 }
 
+# [FIXED] Hong Kong is an Opt-in region. Needs explicit STS endpoint.
 provider "aws" {
-  alias  = "ap_east_1" # Hong Kong (Opt-in)
-  region = "ap-east-1"
+  alias      = "ap_east_1" 
+  region     = "ap-east-1"
+  sts_region = "ap-east-1"
 }
 
 provider "aws" {
