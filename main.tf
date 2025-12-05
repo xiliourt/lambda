@@ -2,12 +2,8 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-    # Good practice to define the archive provider explicitly, though not strictly required
-    archive = {
-      source  = "hashicorp/archive"
-      version = "~> 2.0"
+      # Pin to the latest actual release
+      version = "6.24.0" 
     }
   }
 }
