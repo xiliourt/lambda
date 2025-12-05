@@ -3,7 +3,7 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       # Pin to the latest actual release
-      version = "6.24.0" 
+      version = "6.24.0"
     }
   }
 }
@@ -13,7 +13,6 @@ data "archive_file" "lambda_zip" {
   source_file = "${path.module}/lambda_payload/index.mjs"
   output_path = "${path.module}/lambda_payload/function.zip"
 }
-
 
 # ==============================================================================
 # GLOBAL SHARED RESOURCES
@@ -159,6 +158,7 @@ module "us_east_1" {
   region_name = "us_east_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "us_east_2" {
@@ -167,6 +167,7 @@ module "us_east_2" {
   region_name = "us_east_2"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "us_west_1" {
@@ -175,6 +176,7 @@ module "us_west_1" {
   region_name = "us_west_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "us_west_2" {
@@ -183,6 +185,7 @@ module "us_west_2" {
   region_name = "us_west_2"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ca_central_1" {
@@ -191,6 +194,7 @@ module "ca_central_1" {
   region_name = "ca_central_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "sa_east_1" {
@@ -199,6 +203,7 @@ module "sa_east_1" {
   region_name = "sa_east_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "eu_central_1" {
@@ -207,6 +212,7 @@ module "eu_central_1" {
   region_name = "eu_central_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "eu_west_1" {
@@ -215,6 +221,7 @@ module "eu_west_1" {
   region_name = "eu_west_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "eu_west_2" {
@@ -223,6 +230,7 @@ module "eu_west_2" {
   region_name = "eu_west_2"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "eu_west_3" {
@@ -231,6 +239,7 @@ module "eu_west_3" {
   region_name = "eu_west_3"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "eu_north_1" {
@@ -239,6 +248,7 @@ module "eu_north_1" {
   region_name = "eu_north_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_northeast_1" {
@@ -247,6 +257,7 @@ module "ap_northeast_1" {
   region_name = "ap_northeast_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_northeast_2" {
@@ -255,6 +266,7 @@ module "ap_northeast_2" {
   region_name = "ap_northeast_2"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_northeast_3" {
@@ -263,6 +275,7 @@ module "ap_northeast_3" {
   region_name = "ap_northeast_3"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_southeast_1" {
@@ -271,6 +284,7 @@ module "ap_southeast_1" {
   region_name = "ap_southeast_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_southeast_2" {
@@ -279,6 +293,7 @@ module "ap_southeast_2" {
   region_name = "ap_southeast_2"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_southeast_4" {
@@ -287,6 +302,7 @@ module "ap_southeast_4" {
   region_name = "ap_southeast_4"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_southeast_6" {
@@ -295,6 +311,7 @@ module "ap_southeast_6" {
   region_name = "ap_southeast_6"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_southeast_7" {
@@ -303,6 +320,7 @@ module "ap_southeast_7" {
   region_name = "ap_southeast_7"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_east_1" {
@@ -311,6 +329,7 @@ module "ap_east_1" {
   region_name = "ap_east_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 module "ap_south_1" {
@@ -319,6 +338,7 @@ module "ap_south_1" {
   region_name = "ap_south_1"
   zip_path    = data.archive_file.lambda_zip.output_path
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
+  role_arn    = aws_iam_role.global_lambda_exec.arn
 }
 
 output "urls" {
