@@ -107,11 +107,6 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias  = "ap_southeast_6" # New Zealand (Opt-in)
-  region = "ap-southeast-6"
-}
-
-provider "aws" {
   alias  = "ap_southeast_7" # Thailand (Opt-in)
   region = "ap-southeast-7"
 }
@@ -266,14 +261,6 @@ module "ap_southeast_4" {
   zip_hash    = data.archive_file.lambda_zip.output_base64sha256
 }
 
-module "ap_southeast_6" {
-  source      = "./modules/speed_tester"
-  providers   = { aws = aws.ap_southeast_6 }
-  region_name = "ap_southeast_6"
-  zip_path    = data.archive_file.lambda_zip.output_path
-  zip_hash    = data.archive_file.lambda_zip.output_base64sha256
-}
-
 module "ap_southeast_7" {
   source      = "./modules/speed_tester"
   providers   = { aws = aws.ap_southeast_7 }
@@ -317,7 +304,6 @@ output "urls" {
     ap_singapore   = module.ap_southeast_1.function_url
     ap_sydney      = module.ap_southeast_2.function_url
     ap_melbourne   = module.ap_southeast_4.function_url
-    ap_newzealand  = module.ap_southeast_6.function_url
     ap_thailand    = module.ap_southeast_7.function_url
     ap_hongkong    = module.ap_east_1.function_url
     ap_mumbai      = module.ap_south_1.function_url
