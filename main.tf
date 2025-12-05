@@ -142,6 +142,34 @@ provider "aws" {
   region = "ap-south-1"
 }
 
+# [FIXED] Melbourne is an Opt-in region. Needs explicit STS endpoint.
+provider "aws" {
+  alias      = "ap_southeast_4"
+  region     = "ap-southeast-4"
+  sts_region = "ap-southeast-4"
+}
+
+# [FIXED] New Zealand is an Opt-in region. Needs explicit STS endpoint.
+provider "aws" {
+  alias      = "ap_southeast_6" 
+  region     = "ap-southeast-6"
+  sts_region = "ap-southeast-6"
+}
+
+# [FIXED] Thailand is an Opt-in region. Needs explicit STS endpoint.
+provider "aws" {
+  alias      = "ap_southeast_7" 
+  region     = "ap-southeast-7"
+  sts_region = "ap-southeast-7"
+}
+
+# [FIXED] Hong Kong is an Opt-in region. Needs explicit STS endpoint.
+provider "aws" {
+  alias      = "ap_east_1" 
+  region     = "ap-east-1"
+  sts_region = "ap-east-1"
+}
+
 # ==============================================================================
 # DEPLOYMENT MODULES
 # ==============================================================================
