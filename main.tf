@@ -14,37 +14,36 @@ data "archive_file" "lambda_zip" {
 }
 
 # --- America ---
-provider "aws" { alias = "us_east_1"; region = "us-east-1" }      # N. Virginia
-provider "aws" { alias = "us_east_2"; region = "us-east-2" }      # Ohio
-provider "aws" { alias = "us_west_1"; region = "us-west-1" }      # N. California
-provider "aws" { alias = "us_west_2"; region = "us-west-2" }      # Oregon
-provider "aws" { alias = "ca_central_1"; region = "ca-central-1" }# Canada Central
-provider "aws" { alias = "sa_east_1"; region = "sa-east-1" }      # São Paulo
+provider "aws" { alias = "us_east_1"; region = "us-east-1" }
+provider "aws" { alias = "us_east_2"; region = "us-east-2" }
+provider "aws" { alias = "us_west_1"; region = "us-west-1" }
+provider "aws" { alias = "us_west_2"; region = "us-west-2" }
+provider "aws" { alias = "ca_central_1"; region = "ca-central-1" }
+provider "aws" { alias = "sa_east_1"; region = "sa-east-1" }
 
 # --- Europe ---
-provider "aws" { alias = "eu_central_1"; region = "eu-central-1" }# Frankfurt
-provider "aws" { alias = "eu_west_1"; region = "eu-west-1" }      # Ireland
-provider "aws" { alias = "eu_west_2"; region = "eu-west-2" }      # London
-provider "aws" { alias = "eu_west_3"; region = "eu-west-3" }      # Paris
-provider "aws" { alias = "eu_north_1"; region = "eu-north-1" }    # Stockholm
+provider "aws" { alias = "eu_central_1"; region = "eu-central-1" }
+provider "aws" { alias = "eu_west_1"; region = "eu-west-1" }
+provider "aws" { alias = "eu_west_2"; region = "eu-west-2" }
+provider "aws" { alias = "eu_west_3"; region = "eu-west-3" }
+provider "aws" { alias = "eu_north_1"; region = "eu-north-1" }
 
 # --- Asia Pacific ---
-provider "aws" { alias = "ap_northeast_1"; region = "ap-northeast-1" } # Tokyo
-provider "aws" { alias = "ap_northeast_2"; region = "ap-northeast-2" } # Seoul
-provider "aws" { alias = "ap_northeast_3"; region = "ap-northeast-3" } # Osaka
-provider "aws" { alias = "ap_southeast_1"; region = "ap-southeast-1" } # Singapore
+provider "aws" { alias = "ap_northeast_1"; region = "ap-northeast-1" }
+provider "aws" { alias = "ap_northeast_2"; region = "ap-northeast-2" }
+provider "aws" { alias = "ap_northeast_3"; region = "ap-northeast-3" }
+provider "aws" { alias = "ap_southeast_1"; region = "ap-southeast-1" }
 provider "aws" { alias = "ap_southeast_2"; region = "ap-southeast-2" } # Sydney
-provider "aws" { alias = "ap_southeast_4"; region = "ap-southeast-4" } # Melbourne - OPT IN
-provider "aws" { alias = "ap-southeast-6"; region = "ap-southeast-6" } # New Zealand - OPT IN
-provider "aws" { alias = "ap-southeast-7"; region = "ap-southeast-7" } # Thailand - OPT IN
-provider "aws" { alias = "ap_east_1"; region = "ap-east-1" }           # Hong Kong - OPT IN
-provider "aws" { alias = "ap_south_1"; region = "ap-south-1" }         # Mumbai
+# Note: Changed alias to underscores to match module reference
+provider "aws" { alias = "ap_southeast_4"; region = "ap-southeast-4" } # Melbourne (Opt-in)
+provider "aws" { alias = "ap_southeast_6"; region = "ap-southeast-6" } # New Zealand (Opt-in)
+provider "aws" { alias = "ap_southeast_7"; region = "ap-southeast-7" } # Thailand (Opt-in)
+provider "aws" { alias = "ap_east_1";      region = "ap-east-1" }      # Hong Kong (Opt-in)
+provider "aws" { alias = "ap_south_1";     region = "ap-south-1" }
 
 # ==============================================================================
 # DEPLOYMENT MODULES
 # ==============================================================================
-
-# Define the module once for every alias defined above
 
 module "us_east_1" { source = "./modules/speed_tester"; providers = { aws = aws.us_east_1 }; region_name = "us_east_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "us_east_2" { source = "./modules/speed_tester"; providers = { aws = aws.us_east_2 }; region_name = "us_east_2"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
@@ -52,22 +51,25 @@ module "us_west_1" { source = "./modules/speed_tester"; providers = { aws = aws.
 module "us_west_2" { source = "./modules/speed_tester"; providers = { aws = aws.us_west_2 }; region_name = "us_west_2"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "ca_central_1" { source = "./modules/speed_tester"; providers = { aws = aws.ca_central_1 }; region_name = "ca_central_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "sa_east_1" { source = "./modules/speed_tester"; providers = { aws = aws.sa_east_1 }; region_name = "sa_east_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
+
 module "eu_central_1" { source = "./modules/speed_tester"; providers = { aws = aws.eu_central_1 }; region_name = "eu_central_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "eu_west_1" { source = "./modules/speed_tester"; providers = { aws = aws.eu_west_1 }; region_name = "eu_west_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "eu_west_2" { source = "./modules/speed_tester"; providers = { aws = aws.eu_west_2 }; region_name = "eu_west_2"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "eu_west_3" { source = "./modules/speed_tester"; providers = { aws = aws.eu_west_3 }; region_name = "eu_west_3"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "eu_north_1" { source = "./modules/speed_tester"; providers = { aws = aws.eu_north_1 }; region_name = "eu_north_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
+
 module "ap_northeast_1" { source = "./modules/speed_tester"; providers = { aws = aws.ap_northeast_1 }; region_name = "ap_northeast_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "ap_northeast_2" { source = "./modules/speed_tester"; providers = { aws = aws.ap_northeast_2 }; region_name = "ap_northeast_2"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "ap_northeast_3" { source = "./modules/speed_tester"; providers = { aws = aws.ap_northeast_3 }; region_name = "ap_northeast_3"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "ap_southeast_1" { source = "./modules/speed_tester"; providers = { aws = aws.ap_southeast_1 }; region_name = "ap_southeast_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "ap_southeast_2" { source = "./modules/speed_tester"; providers = { aws = aws.ap_southeast_2 }; region_name = "ap_southeast_2"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
-module "ap_southeast_2" { source = "./modules/speed_tester"; providers = { aws = aws.ap_southeast_2 }; region_name = "ap_southeast_2"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
+
+# --- OPT IN REGIONS (Must use corrected alias) ---
 module "ap_southeast_4" { source = "./modules/speed_tester"; providers = { aws = aws.ap_southeast_4 }; region_name = "ap_southeast_4"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "ap_southeast_6" { source = "./modules/speed_tester"; providers = { aws = aws.ap_southeast_6 }; region_name = "ap_southeast_6"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 module "ap_southeast_7" { source = "./modules/speed_tester"; providers = { aws = aws.ap_southeast_7 }; region_name = "ap_southeast_7"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
-module "ap_south_1" { source = "./modules/speed_tester"; providers = { aws = aws.ap_south_1 }; region_name = "ap_south_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
-module "ap_east_1" { source = "./modules/speed_tester"; providers = { aws = aws.ap_east_1 }; region_name = "ap_east_1"; zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
+module "ap_east_1"      { source = "./modules/speed_tester"; providers = { aws = aws.ap_east_1 };      region_name = "ap_east_1";      zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
+module "ap_south_1"     { source = "./modules/speed_tester"; providers = { aws = aws.ap_south_1 };     region_name = "ap_south_1";     zip_path = data.archive_file.lambda_zip.output_path; zip_hash = data.archive_file.lambda_zip.output_base64sha256 }
 
 output "urls" {
   value = {
@@ -90,6 +92,7 @@ output "urls" {
     ap_melbourne   = module.ap_southeast_4.function_url
     ap_newzealand  = module.ap_southeast_6.function_url
     ap_thailand    = module.ap_southeast_7.function_url
+    ap_hongkong    = module.ap_east_1.function_url
     ap_mumbai      = module.ap_south_1.function_url
   }
 }
