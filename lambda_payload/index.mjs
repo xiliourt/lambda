@@ -2,7 +2,7 @@ import https from 'https';
 
 export const handler = async (event) => {
     // --- 1. Configuration ---
-    const TIMEOUT_MS = 2500; 
+    const TIMEOUT_MS = 8000; 
     let targetUrl = null;
 
     if (event.url) targetUrl = event.url;
@@ -30,7 +30,7 @@ export const handler = async (event) => {
         const responseData = {
             cache_status: result.cacheStatus,
             complete: result.complete,
-            message: result.complete ? "Complete" : "Timed out at 2.5s",
+            message: result.complete ? "Complete" : "Timed out at 8s",
             time_taken_seconds: parseFloat(result.duration),
             downloaded_mb: parseFloat(downloadedMB),
             downloaded_bytes: result.bytes,
