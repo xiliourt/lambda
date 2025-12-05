@@ -1,12 +1,13 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
     }
   }
 }
 
-# 1. IAM Role (Allows Lambda to run)
+# 1. IAM Role (Identity)
+# Must be unique globally, so we keep var.region_name here
 resource "aws_iam_role" "lambda_exec" {
   name = "speed_test_role_${var.region_name}"
 
@@ -28,19 +29,21 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 
 # 2. The Lambda Function
 resource "aws_lambda_function" "speed_test" {
-  function_name = "global_speed_test"
+  # RECOMMENDED CHANGE: Add region name here for easier debugging in AWS Console
+  function_name = "global_speed_test_${var.region_name}"
+  
   role          = aws_iam_role.lambda_exec.arn
   handler       = "index.handler"
   runtime       = "nodejs20.x"
-  timeout       = 10 # 10 seconds is plenty for the 2.5s logic
+  timeout       = 10
   memory_size   = 128
-  
+   
   filename         = var.zip_path
   source_code_hash = var.zip_hash
 
   environment {
     variables = {
-      TARGET_URL = "" # Optional default
+      TARGET_URL = "" 
     }
   }
 }
@@ -48,10 +51,28 @@ resource "aws_lambda_function" "speed_test" {
 # 3. The Function URL (Public Endpoint)
 resource "aws_lambda_function_url" "url" {
   function_name      = aws_lambda_function.speed_test.function_name
-  authorization_type = "NONE" # Publicly accessible
-  
+  authorization_type = "NONE" 
+   
   cors {
     allow_origins = ["*"]
     allow_methods = ["GET"]
   }
+}
+
+# --- Outputs & Variables ---
+
+output "function_url" {
+  value = aws_lambda_function_url.url.function_url
+}
+
+variable "region_name" {
+  type = string
+}
+
+variable "zip_path" {
+  type = string
+}
+
+variable "zip_hash" {
+  type = string
 }
