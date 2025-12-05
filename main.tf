@@ -14,6 +14,29 @@ data "archive_file" "lambda_zip" {
   output_path = "${path.module}/lambda_payload/function.zip"
 }
 
+
+# ==============================================================================
+# GLOBAL SHARED RESOURCES
+# ==============================================================================
+
+resource "aws_iam_role" "global_lambda_exec" {
+  name = "speed_tester_global_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = { Service = "lambda.amazonaws.com" }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "global_lambda_logs" {
+  role       = aws_iam_role.global_lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 # ==============================================================================
 # PROVIDERS
 # ==============================================================================
