@@ -1,8 +1,7 @@
 import https from 'https';
 
 export const handler = async (event) => {
-    // --- 1. Configuration ---
-    const TIMEOUT_MS = 2500; // 2.5 seconds hard limit
+    const TIMEOUT_MS = 2500; 
     let targetUrl = null;
 
     if (event.url) targetUrl = event.url;
@@ -10,38 +9,48 @@ export const handler = async (event) => {
     else targetUrl = process.env.TARGET_URL;
 
     if (!targetUrl) {
-        return { statusCode: 400, body: "Error: Missing 'url' parameter." };
+        return { 
+            statusCode: 400, 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: "Missing 'url' parameter." }) 
+        };
     }
 
     try {
-        // --- 2. Perform Download with Timeout ---
         const result = await downloadWithTimeout(targetUrl, TIMEOUT_MS);
         
-        // --- 3. Calculate Speed (Mbps) ---
-        // Formula: (Bytes * 8) / (Seconds * 1,000,000)
         const bits = result.bytes * 8;
         const megaBits = bits / 1000000;
-        const mbps = (megaBits / result.duration).toFixed(2);
-
-        // --- 4. Format Output ---
-        const statusTag = result.complete ? "(Complete)" : "(Timed out at 2.5s)";
+        const mbps = result.duration > 0 ? (megaBits / result.duration).toFixed(2) : "0.00"; 
+        const downloadedMB = (result.bytes / 1024 / 1024).toFixed(2);
+        
+        const responseData = {
+            cache_status: result.cacheStatus,
+            complete: result.complete,
+            message: result.complete ? "Complete" : "Timed out at 2.5s",
+            time_taken_seconds: parseFloat(result.duration),
+            downloaded_mb: parseFloat(downloadedMB),
+            downloaded_bytes: result.bytes,
+            speed_mbps: parseFloat(mbps)
+        };
         
         return {
             statusCode: 200,
             headers: { 
-                "Content-Type": "text/plain",
-                "X-Cache-Status": result.cacheStatus
+                "Content-Type": "application/json",
+                "X-Cache-Status": result.cacheStatus,
+                "Access-Control-Allow-Origin": "*" 
             },
-            body: `Cache Status: ${result.cacheStatus}\n` +
-                  `State:        ${statusTag}\n` +
-                  `Time Taken:   ${result.duration} seconds\n` +
-                  `Downloaded:   ${(result.bytes / 1024 / 1024).toFixed(2)} MB\n` +
-                  `Speed:        ${mbps} Mbps`
+            body: JSON.stringify(responseData)
         };
 
     } catch (error) {
         console.error(error);
-        return { statusCode: 500, body: `Error: ${error.message}` };
+        return { 
+            statusCode: 500, 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ error: error.message }) 
+        };
     }
 };
 
@@ -55,14 +64,12 @@ function downloadWithTimeout(urlStr, timeoutMs) {
         const req = https.request(urlStr, options, (res) => {
             const cacheStatus = res.headers['cf-cache-status'] || 'MISS/UNKNOWN';
 
-            // 1. Data Listener
             res.on('data', (chunk) => {
                 bytes += chunk.length;
             });
 
-            // 2. Completion Listener
             res.on('end', () => {
-                if (isResolved) return; // Ignore if timeout already happened
+                if (isResolved) return;
                 isResolved = true;
                 
                 const duration = ((Date.now() - startTime) / 1000).toFixed(3);
@@ -75,28 +82,27 @@ function downloadWithTimeout(urlStr, timeoutMs) {
             });
         });
 
-        // 3. The "2.5s" Safety Timer
         const timeoutId = setTimeout(() => {
-            if (isResolved) return; // Ignore if download finished exactly at the buzzer
+            if (isResolved) return; 
             isResolved = true;
 
-            req.destroy(); // Kill the connection immediately
+            const currentRes = req.res; 
+            const timeoutCacheStatus = currentRes && currentRes.headers ? (currentRes.headers['cf-cache-status'] || 'UNKNOWN') : 'TIMEOUT_BEFORE_HEADERS';
+
+            req.destroy(); 
             
             const duration = ((Date.now() - startTime) / 1000).toFixed(3);
             
-            // Resolve with whatever data we got so far
-            // Note: We might not know the cache status if headers never arrived, 
-            // but usually headers arrive well before 2.5s.
             resolve({
                 complete: false,
-                cacheStatus: req.res ? req.res.headers['cf-cache-status'] || 'UNKNOWN' : 'TIMEOUT_BEFORE_HEADERS',
+                cacheStatus: timeoutCacheStatus,
                 bytes,
                 duration
             });
         }, timeoutMs);
 
         req.on('error', (err) => {
-            if (isResolved) return; // Ignore errors caused by our own req.destroy()
+            if (isResolved) return; 
             clearTimeout(timeoutId);
             reject(err);
         });
